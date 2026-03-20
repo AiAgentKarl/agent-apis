@@ -23,6 +23,10 @@
     {
       "src": "api/discover.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "api/route.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -31,6 +35,7 @@
     { "src": "/api/crypto", "dest": "/api/crypto.py" },
     { "src": "/api/compliance", "dest": "/api/compliance.py" },
     { "src": "/api/optimize", "dest": "/api/optimize.py" },
-    { "src": "/api/discover", "dest": "/api/discover.py" }
+    { "src": "/api/discover", "dest": "/api/discover.py" },
+    { "src": "/api/route", "dest": "/api/route.py" }
   ]
 }
