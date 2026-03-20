@@ -1,13 +1,7 @@
 {
-  "functions": {
-    "api/*.py": {
-      "runtime": "@vercel/python@4.0.0",
-      "maxDuration": 10
-    }
-  },
-  "routes": [
-    {"src": "/api/weather", "dest": "/api/weather.py"},
-    {"src": "/api/pii", "dest": "/api/pii.py"},
-    {"src": "/api/crypto", "dest": "/api/crypto.py"}
+  "rewrites": [
+    {"source": "/api/weather", "destination": "/api/weather"},
+    {"source": "/api/pii", "destination": "/api/pii"},
+    {"source": "/api/crypto", "destination": "/api/crypto"}
   ]
 }
