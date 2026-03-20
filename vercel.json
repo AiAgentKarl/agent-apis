@@ -1,7 +1,8 @@
 {
-  "rewrites": [
-    {"source": "/api/weather", "destination": "/api/weather"},
-    {"source": "/api/pii", "destination": "/api/pii"},
-    {"source": "/api/crypto", "destination": "/api/crypto"}
+  "buildCommand": "",
+  "outputDirectory": "",
+  "framework": null,
+  "builds": [
+    { "src": "api/*.py", "use": "@vercel/python" }
   ]
 }
