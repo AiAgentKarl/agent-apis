@@ -1,8 +1,21 @@
 {
-  "buildCommand": "",
-  "outputDirectory": "",
-  "framework": null,
   "builds": [
-    { "src": "api/*.py", "use": "@vercel/python" }
+    {
+      "src": "api/weather.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/pii.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/crypto.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    { "src": "/api/weather", "dest": "/api/weather.py" },
+    { "src": "/api/pii", "dest": "/api/pii.py" },
+    { "src": "/api/crypto", "dest": "/api/crypto.py" }
   ]
 }
