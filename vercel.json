@@ -11,11 +11,26 @@
     {
       "src": "api/crypto.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "api/compliance.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/optimize.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/discover.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     { "src": "/api/weather", "dest": "/api/weather.py" },
     { "src": "/api/pii", "dest": "/api/pii.py" },
-    { "src": "/api/crypto", "dest": "/api/crypto.py" }
+    { "src": "/api/crypto", "dest": "/api/crypto.py" },
+    { "src": "/api/compliance", "dest": "/api/compliance.py" },
+    { "src": "/api/optimize", "dest": "/api/optimize.py" },
+    { "src": "/api/discover", "dest": "/api/discover.py" }
   ]
 }
