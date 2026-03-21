@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "provider": "AiAgentKarl",
+  "description": "40+ MCP servers and 11 APIs for AI agents",
+  "homepage": "https://aiagentkarl.github.io",
+  "api_base": "https://agent-apis.vercel.app",
+  "discovery_endpoint": "https://agent-apis.vercel.app/api/discover",
+  "agent_registry": "https://agent-apis.vercel.app/api/hub?action=agents",
+  "services": [
+    {
+      "name": "Server Discovery",
+      "endpoint": "https://agent-apis.vercel.app/api/discover",
+      "description": "Find MCP servers by capability or keyword",
+      "method": "GET",
+      "parameters": {"q": "search query", "category": "filter by category"}
+    },
+    {
+      "name": "AI Cost Router",
+      "endpoint": "https://agent-apis.vercel.app/api/route",
+      "description": "Get cheapest AI model recommendation for a task",
+      "method": "GET",
+      "parameters": {"task": "task description", "budget": "low/medium/high"}
+    },
+    {
+      "name": "Compliance Check",
+      "endpoint": "https://agent-apis.vercel.app/api/compliance",
+      "description": "Check if an agent action is GDPR/AI Act compliant",
+      "method": "GET",
+      "parameters": {"action": "action type", "jurisdiction": "EU/US"}
+    },
+    {
+      "name": "Context Optimizer",
+      "endpoint": "https://agent-apis.vercel.app/api/optimize",
+      "description": "Recommend optimal MCP server combination for a task",
+      "method": "GET",
+      "parameters": {"task": "task description"}
+    },
+    {
+      "name": "Weather",
+      "endpoint": "https://agent-apis.vercel.app/api/weather",
+      "description": "Global weather data",
+      "method": "GET",
+      "parameters": {"location": "city name or coordinates"}
+    },
+    {
+      "name": "Crypto Prices",
+      "endpoint": "https://agent-apis.vercel.app/api/crypto",
+      "description": "Cryptocurrency prices and market data",
+      "method": "GET",
+      "parameters": {"token": "token name e.g. bitcoin"}
+    },
+    {
+      "name": "PII Scanner",
+      "endpoint": "https://agent-apis.vercel.app/api/pii",
+      "description": "Scan text for personally identifiable information",
+      "method": "GET",
+      "parameters": {"text": "text to scan"}
+    },
+    {
+      "name": "Agent Registry",
+      "endpoint": "https://agent-apis.vercel.app/api/hub",
+      "description": "Register agents, get recommendations, ecosystem status",
+      "method": "GET",
+      "parameters": {"action": "agents/recommend/status/feed"}
+    },
+    {
+      "name": "Shared Cache",
+      "endpoint": "https://agent-apis.vercel.app/api/cache",
+      "description": "Shared computation cache — save tokens by reusing results",
+      "method": "GET",
+      "parameters": {"key": "cache key", "search": "search query", "stats": "true"}
+    },
+    {
+      "name": "Trust Staking",
+      "endpoint": "https://agent-apis.vercel.app/api/stake",
+      "description": "Agent reputation staking and trust scores",
+      "method": "GET",
+      "parameters": {"agent": "agent id", "leaderboard": "true"}
+    },
+    {
+      "name": "Community",
+      "endpoint": "https://agent-apis.vercel.app/api/social",
+      "description": "Reviews, threat intelligence, task exchange",
+      "method": "GET",
+      "parameters": {"type": "reviews/threats/tasks"}
+    }
+  ],
+  "mcp_servers": {
+    "pypi": "https://pypi.org/user/AiKarlo/",
+    "npm": "https://www.npmjs.com/~aiagentkarl",
+    "github": "https://github.com/AiAgentKarl"
+  }
+}

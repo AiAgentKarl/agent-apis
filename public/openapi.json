@@ -1,0 +1,742 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AiAgentKarl Agent APIs",
+    "description": "11 serverless APIs for AI agents: weather, crypto, PII scanning, compliance checks, MCP server discovery, AI cost routing, context optimization, agent registry, shared cache, reputation staking, and community features.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "AiAgentKarl",
+      "url": "https://github.com/AiAgentKarl"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://agent-apis.vercel.app",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/weather": {
+      "get": {
+        "operationId": "getWeather",
+        "summary": "Get current weather data",
+        "description": "Returns current weather data for any location worldwide. Uses Open-Meteo (free, no API key needed).",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "City name (e.g. Berlin, New York)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude (use with lon instead of location)",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "description": "Longitude (use with lat instead of location)",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weather data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "location": { "type": "string" },
+                    "latitude": { "type": "number" },
+                    "longitude": { "type": "number" },
+                    "temperature_c": { "type": "number" },
+                    "feels_like_c": { "type": "number" },
+                    "humidity_pct": { "type": "number" },
+                    "wind_speed_kmh": { "type": "number" },
+                    "wind_gusts_kmh": { "type": "number" },
+                    "wind_direction_deg": { "type": "number" },
+                    "precipitation_mm": { "type": "number" },
+                    "cloud_cover_pct": { "type": "number" },
+                    "pressure_hpa": { "type": "number" },
+                    "uv_index": { "type": "number" },
+                    "is_day": { "type": "boolean" },
+                    "condition": { "type": "string" },
+                    "weather_code": { "type": "integer" },
+                    "timezone": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing parameters" },
+          "404": { "description": "Location not found" }
+        }
+      }
+    },
+    "/api/crypto": {
+      "get": {
+        "operationId": "getCryptoPrice",
+        "summary": "Get cryptocurrency price and market data",
+        "description": "Returns current price, market cap, 24h/7d/30d changes for any cryptocurrency. Uses CoinGecko (free, no API key needed).",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "description": "Token name or symbol (e.g. bitcoin, sol, eth)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "Fiat currency for pricing (default: usd)",
+            "schema": { "type": "string", "default": "usd" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crypto market data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "name": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "price": { "type": "number" },
+                    "currency": { "type": "string" },
+                    "change_24h_pct": { "type": "number" },
+                    "change_7d_pct": { "type": "number" },
+                    "change_30d_pct": { "type": "number" },
+                    "market_cap": { "type": "number" },
+                    "market_cap_formatted": { "type": "string" },
+                    "market_cap_rank": { "type": "integer" },
+                    "volume_24h": { "type": "number" },
+                    "volume_24h_formatted": { "type": "string" },
+                    "high_24h": { "type": "number" },
+                    "low_24h": { "type": "number" },
+                    "ath": { "type": "number" },
+                    "ath_change_pct": { "type": "number" },
+                    "circulating_supply": { "type": "number" },
+                    "total_supply": { "type": "number" },
+                    "max_supply": { "type": "number" },
+                    "last_updated": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing token parameter" },
+          "404": { "description": "Token not found" },
+          "429": { "description": "Rate limit exceeded" }
+        }
+      }
+    },
+    "/api/pii": {
+      "get": {
+        "operationId": "scanPiiGet",
+        "summary": "Scan text for personally identifiable information (GET)",
+        "description": "Detects and redacts PII in text: emails, phone numbers, credit cards, SSN, IBAN, IP addresses. Regex-based, no API key needed.",
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to scan for PII",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PII scan results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pii_found": { "type": "boolean" },
+                    "pii_count": { "type": "integer" },
+                    "types_found": { "type": "array", "items": { "type": "string" } },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": { "type": "string" },
+                          "value_preview": { "type": "string" },
+                          "position": {
+                            "type": "object",
+                            "properties": {
+                              "start": { "type": "integer" },
+                              "end": { "type": "integer" }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "redacted_text": { "type": "string" },
+                    "original_length": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing text parameter" }
+        }
+      },
+      "post": {
+        "operationId": "scanPiiPost",
+        "summary": "Scan text for PII (POST, for large texts)",
+        "description": "Same as GET but accepts text in JSON body. Max 100KB.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "description": "Text to scan for PII" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "PII scan results" },
+          "400": { "description": "Missing or invalid text" },
+          "413": { "description": "Text too large (max 100KB)" }
+        }
+      }
+    },
+    "/api/compliance": {
+      "get": {
+        "operationId": "checkCompliance",
+        "summary": "Check GDPR/EU AI Act compliance for an action",
+        "description": "Checks if an AI agent action is compliant with GDPR and EU AI Act. Returns risk level, regulations, requirements, and recommendations.",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": true,
+            "description": "Action type to check",
+            "schema": {
+              "type": "string",
+              "enum": ["automated_decision", "biometric_identification", "credit_scoring", "content_moderation", "recruitment", "data_processing", "customer_profiling", "chatbot_interaction", "medical_diagnosis", "autonomous_driving", "price_optimization", "surveillance"]
+            }
+          },
+          {
+            "name": "jurisdiction",
+            "in": "query",
+            "description": "Jurisdiction (default: EU)",
+            "schema": { "type": "string", "default": "EU" }
+          },
+          {
+            "name": "data_type",
+            "in": "query",
+            "description": "Type of data being processed",
+            "schema": {
+              "type": "string",
+              "enum": ["personal", "sensitive", "biometric", "health", "financial", "children", "anonymous"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compliance check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "action": { "type": "string" },
+                    "jurisdiction": { "type": "string" },
+                    "risk_level": { "type": "string", "enum": ["minimal", "limited", "high", "unacceptable"] },
+                    "allowed": { "type": "boolean" },
+                    "regulations": { "type": "array", "items": { "type": "string" } },
+                    "requirements": { "type": "array", "items": { "type": "string" } },
+                    "recommendations": { "type": "array", "items": { "type": "string" } },
+                    "gdpr_articles": { "type": "array", "items": { "type": "string" } },
+                    "ai_act_category": { "type": "string" },
+                    "compliance_deadline": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing or invalid parameters" },
+          "404": { "description": "Unknown action type" }
+        }
+      }
+    },
+    "/api/discover": {
+      "get": {
+        "operationId": "discoverServers",
+        "summary": "Discover MCP servers by keyword or category",
+        "description": "Search a catalog of 50+ MCP servers with fuzzy keyword matching. Filter by category.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query (keywords)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter by category",
+            "schema": {
+              "type": "string",
+              "enum": ["agent-tools", "agriculture", "aviation", "blockchain", "commerce", "compliance", "data", "health", "infrastructure", "security", "space", "weather"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "query": { "type": "string" },
+                    "category": { "type": "string" },
+                    "total_results": { "type": "integer" },
+                    "servers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "description": { "type": "string" },
+                          "category": { "type": "string" },
+                          "install_command": { "type": "string" },
+                          "github_url": { "type": "string" },
+                          "tools_count": { "type": "integer" },
+                          "rating": { "type": "number" }
+                        }
+                      }
+                    },
+                    "catalog_size": { "type": "integer" },
+                    "available_categories": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing query or invalid category" }
+        }
+      }
+    },
+    "/api/route": {
+      "get": {
+        "operationId": "routeAiModel",
+        "summary": "Get optimal AI model recommendation for a task",
+        "description": "Recommends the cheapest/best AI model based on task complexity, budget, and priority. Covers 14+ models from OpenAI, Anthropic, Google, Meta, DeepSeek, Mistral.",
+        "parameters": [
+          {
+            "name": "task",
+            "in": "query",
+            "required": true,
+            "description": "Description of the task",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget",
+            "in": "query",
+            "description": "Budget level",
+            "schema": { "type": "string", "enum": ["low", "medium", "high"], "default": "medium" }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Optimization priority",
+            "schema": { "type": "string", "enum": ["cost", "quality", "speed"], "default": "cost" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model recommendation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task": { "type": "string" },
+                    "task_complexity": { "type": "string", "enum": ["simple", "medium", "complex", "expert"] },
+                    "budget": { "type": "string" },
+                    "priority": { "type": "string" },
+                    "recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "model": { "type": "string" },
+                        "provider": { "type": "string" },
+                        "cost_per_1m_tokens": {
+                          "type": "object",
+                          "properties": {
+                            "input": { "type": "number" },
+                            "output": { "type": "number" }
+                          }
+                        },
+                        "strengths": { "type": "array", "items": { "type": "string" } },
+                        "speed": { "type": "string" },
+                        "reasoning": { "type": "string" },
+                        "estimated_savings_vs_premium": { "type": "string" }
+                      }
+                    },
+                    "alternatives": { "type": "array", "items": { "type": "object" } },
+                    "models_evaluated": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing or invalid parameters" }
+        }
+      }
+    },
+    "/api/optimize": {
+      "get": {
+        "operationId": "optimizeContext",
+        "summary": "Recommend optimal MCP server combination for a task",
+        "description": "Analyzes a task and recommends the best MCP server combination. Can also optimize an existing set of servers to reduce token usage.",
+        "parameters": [
+          {
+            "name": "task",
+            "in": "query",
+            "required": true,
+            "description": "Task description",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "servers",
+            "in": "query",
+            "description": "Comma-separated list of current server names (for optimization mode)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Optimization result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mode": { "type": "string", "enum": ["recommend", "optimize_existing"] },
+                    "task": { "type": "string" },
+                    "recommended_servers": { "type": "array", "items": { "type": "object" } },
+                    "estimated_tokens": { "type": "integer" },
+                    "context_budget": {
+                      "type": "object",
+                      "properties": {
+                        "total": { "type": "integer" },
+                        "available_for_tools": { "type": "integer" },
+                        "usage_pct": { "type": "number" }
+                      }
+                    },
+                    "reasoning": { "type": "string" },
+                    "catalog_size": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing task parameter" }
+        }
+      }
+    },
+    "/api/hub": {
+      "get": {
+        "operationId": "agentHub",
+        "summary": "Agent ecosystem hub: registry, recommendations, status",
+        "description": "Combined endpoint for agent ecosystem management. Supports: ecosystem status, activity feed, health check, agent registry, and recommendations.",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": true,
+            "description": "Action to perform",
+            "schema": {
+              "type": "string",
+              "enum": ["status", "feed", "health", "agents", "recommend"]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query (for agents action)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "capability",
+            "in": "query",
+            "description": "Filter by capability (for agents action)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Recommendation type: task, agent, trending (for recommend action)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "task",
+            "in": "query",
+            "description": "Task description (for recommend?type=task)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Hub response (varies by action)" },
+          "400": { "description": "Missing or invalid parameters" }
+        }
+      },
+      "post": {
+        "operationId": "agentHubRegister",
+        "summary": "Register an agent or send heartbeat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": { "type": "string", "enum": ["register", "heartbeat"] },
+                  "agent_id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "capabilities": { "type": "array", "items": { "type": "string" } },
+                  "endpoint": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Registration or heartbeat result" },
+          "400": { "description": "Missing fields" }
+        }
+      }
+    },
+    "/api/cache": {
+      "get": {
+        "operationId": "getCache",
+        "summary": "Shared computation cache for AI agents",
+        "description": "A CDN for agent intelligence. Agents share computed results so others skip recomputation. Supports key lookup, search, and statistics.",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "Cache key to look up",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search cache by keywords (keys and tags)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "stats",
+            "in": "query",
+            "description": "Set to 'true' to get cache statistics",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Cache result or statistics" },
+          "404": { "description": "Key not found" }
+        }
+      },
+      "post": {
+        "operationId": "setCache",
+        "summary": "Store a new cache entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["key", "value"],
+                "properties": {
+                  "key": { "type": "string", "description": "Unique cache key" },
+                  "value": { "description": "Any JSON value to cache" },
+                  "ttl_hours": { "type": "integer", "default": 24, "description": "Time-to-live in hours (1-720)" },
+                  "tags": { "type": "array", "items": { "type": "string" }, "description": "Tags for search" },
+                  "agent_id": { "type": "string", "description": "ID of the caching agent" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Entry created" },
+          "200": { "description": "Entry updated" },
+          "400": { "description": "Missing fields" }
+        }
+      }
+    },
+    "/api/stake": {
+      "get": {
+        "operationId": "getStake",
+        "summary": "Agent reputation staking and trust scores",
+        "description": "Agents stake reputation points as trust signals. Successful stakes increase reputation, failures reduce it. Like a bond/deposit system for agent trust.",
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "description": "Agent ID to look up stakes and trust level",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "leaderboard",
+            "in": "query",
+            "description": "Set to 'true' to get the trust leaderboard",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "verify",
+            "in": "query",
+            "description": "Stake ID to verify",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Stake data, trust info, or leaderboard" },
+          "404": { "description": "Agent or stake not found" }
+        }
+      },
+      "post": {
+        "operationId": "createStake",
+        "summary": "Create a new reputation stake",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["agent_id", "amount", "task_description"],
+                "properties": {
+                  "agent_id": { "type": "string" },
+                  "amount": { "type": "number", "minimum": 10 },
+                  "task_description": { "type": "string" },
+                  "duration_hours": { "type": "number", "default": 24 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Stake created" },
+          "400": { "description": "Validation error" }
+        }
+      },
+      "patch": {
+        "operationId": "resolveStake",
+        "summary": "Report stake outcome (success/failure)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["stake_id", "outcome"],
+                "properties": {
+                  "stake_id": { "type": "string" },
+                  "outcome": { "type": "string", "enum": ["success", "failure"] },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Stake resolved" },
+          "404": { "description": "Stake not found" },
+          "409": { "description": "Stake already resolved" }
+        }
+      }
+    },
+    "/api/social": {
+      "get": {
+        "operationId": "getSocial",
+        "summary": "Community features: reviews, threats, tasks",
+        "description": "Combined endpoint for community features. Supports reviews (server ratings), threat intelligence (security alerts), and task exchange (collaborative work).",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "description": "Feature type",
+            "schema": { "type": "string", "enum": ["reviews", "threats", "tasks"] }
+          },
+          {
+            "name": "server",
+            "in": "query",
+            "description": "Server name for reviews lookup",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "description": "Filter threats by severity",
+            "schema": { "type": "string", "enum": ["critical", "high", "medium", "low"] }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter tasks by status",
+            "schema": { "type": "string", "enum": ["open", "claimed", "completed"] }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Social data (varies by type)" },
+          "400": { "description": "Missing type parameter" }
+        }
+      },
+      "post": {
+        "operationId": "postSocial",
+        "summary": "Submit a review, report a threat, or create/claim a task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": { "type": "string", "enum": ["review", "threat", "task", "claim"] },
+                  "server": { "type": "string" },
+                  "reviewer": { "type": "string" },
+                  "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                  "comment": { "type": "string" },
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "severity": { "type": "string" },
+                  "reporter": { "type": "string" },
+                  "reward": { "type": "integer" },
+                  "skills_required": { "type": "array", "items": { "type": "string" } },
+                  "task_id": { "type": "string" },
+                  "agent_id": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created successfully" },
+          "200": { "description": "Action completed" },
+          "400": { "description": "Missing fields" }
+        }
+      }
+    }
+  }
+}

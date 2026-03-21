@@ -61,6 +61,9 @@
     { "src": "/api/social", "dest": "/api/social.py" },
     { "src": "/api/cache", "dest": "/api/cache.py" },
     { "src": "/api/stake", "dest": "/api/stake.py" },
+    { "src": "/openapi.json", "dest": "/public/openapi.json" },
+    { "src": "/robots.txt", "dest": "/public/robots.txt" },
+    { "src": "/.well-known/(.*)", "dest": "/public/.well-known/$1" },
     { "src": "/public/(.*)", "dest": "/public/$1" },
     { "src": "/", "dest": "/public/index.html" }
   ]
