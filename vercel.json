@@ -41,15 +41,7 @@
       "use": "@vercel/python"
     },
     {
-      "src": "api/ecosystem.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/agents.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/recommend.py",
+      "src": "api/hub.py",
       "use": "@vercel/python"
     }
   ],
@@ -64,8 +56,6 @@
     { "src": "/api/reviews", "dest": "/api/reviews.py" },
     { "src": "/api/threats", "dest": "/api/threats.py" },
     { "src": "/api/tasks", "dest": "/api/tasks.py" },
-    { "src": "/api/ecosystem", "dest": "/api/ecosystem.py" },
-    { "src": "/api/agents", "dest": "/api/agents.py" },
-    { "src": "/api/recommend", "dest": "/api/recommend.py" }
+    { "src": "/api/hub", "dest": "/api/hub.py" }
   ]
 }
