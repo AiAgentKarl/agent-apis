@@ -43,6 +43,10 @@
     {
       "src": "api/stake.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
