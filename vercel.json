@@ -56,6 +56,8 @@
     { "src": "/api/hub", "dest": "/api/hub.py" },
     { "src": "/api/social", "dest": "/api/social.py" },
     { "src": "/api/cache", "dest": "/api/cache.py" },
-    { "src": "/api/stake", "dest": "/api/stake.py" }
+    { "src": "/api/stake", "dest": "/api/stake.py" },
+    { "src": "/public/(.*)", "dest": "/public/$1" },
+    { "src": "/", "dest": "/public/index.html" }
   ]
 }
