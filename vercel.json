@@ -43,6 +43,14 @@
     {
       "src": "api/hub.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "api/cache.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/stake.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -56,6 +64,8 @@
     { "src": "/api/reviews", "dest": "/api/reviews.py" },
     { "src": "/api/threats", "dest": "/api/threats.py" },
     { "src": "/api/tasks", "dest": "/api/tasks.py" },
-    { "src": "/api/hub", "dest": "/api/hub.py" }
+    { "src": "/api/hub", "dest": "/api/hub.py" },
+    { "src": "/api/cache", "dest": "/api/cache.py" },
+    { "src": "/api/stake", "dest": "/api/stake.py" }
   ]
 }
