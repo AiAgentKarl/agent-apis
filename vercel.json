@@ -29,19 +29,11 @@
       "use": "@vercel/python"
     },
     {
-      "src": "api/reviews.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/threats.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/tasks.py",
-      "use": "@vercel/python"
-    },
-    {
       "src": "api/hub.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/social.py",
       "use": "@vercel/python"
     },
     {
@@ -61,10 +53,8 @@
     { "src": "/api/optimize", "dest": "/api/optimize.py" },
     { "src": "/api/discover", "dest": "/api/discover.py" },
     { "src": "/api/route", "dest": "/api/route.py" },
-    { "src": "/api/reviews", "dest": "/api/reviews.py" },
-    { "src": "/api/threats", "dest": "/api/threats.py" },
-    { "src": "/api/tasks", "dest": "/api/tasks.py" },
     { "src": "/api/hub", "dest": "/api/hub.py" },
+    { "src": "/api/social", "dest": "/api/social.py" },
     { "src": "/api/cache", "dest": "/api/cache.py" },
     { "src": "/api/stake", "dest": "/api/stake.py" }
   ]
