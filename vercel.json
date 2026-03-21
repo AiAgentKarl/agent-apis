@@ -27,6 +27,18 @@
     {
       "src": "api/route.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "api/reviews.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/threats.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/tasks.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -36,6 +48,9 @@
     { "src": "/api/compliance", "dest": "/api/compliance.py" },
     { "src": "/api/optimize", "dest": "/api/optimize.py" },
     { "src": "/api/discover", "dest": "/api/discover.py" },
-    { "src": "/api/route", "dest": "/api/route.py" }
+    { "src": "/api/route", "dest": "/api/route.py" },
+    { "src": "/api/reviews", "dest": "/api/reviews.py" },
+    { "src": "/api/threats", "dest": "/api/threats.py" },
+    { "src": "/api/tasks", "dest": "/api/tasks.py" }
   ]
 }
