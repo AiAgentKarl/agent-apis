@@ -11,6 +11,7 @@ import hashlib
 import time
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timezone, timedelta
+from api.storage import load_data, save_data
 
 
 # ============================================================
@@ -198,6 +199,11 @@ def _build_seed_data():
 
 # Globaler In-Memory-Speicher (pro Cold-Start)
 STAKES_DB = _build_seed_data()
+
+# --- Persistenz: Stakes aus /tmp/ laden falls vorhanden ---
+_persisted_stakes = load_data("stakes_db")
+if _persisted_stakes is not None:
+    STAKES_DB = _persisted_stakes
 
 
 # ============================================================
@@ -497,6 +503,9 @@ class handler(BaseHTTPRequestHandler):
 
         STAKES_DB[stake_id] = new_stake
 
+        # Persistenz: Stakes nach /tmp/ speichern
+        save_data("stakes_db", STAKES_DB)
+
         # Trust nach dem neuen Stake berechnen
         trust = _calculate_trust(agent_id)
 
@@ -579,6 +588,9 @@ class handler(BaseHTTPRequestHandler):
         stake["resolved_at"] = now
         if reason:
             stake["resolution_reason"] = reason
+
+        # Persistenz: Stakes nach /tmp/ speichern
+        save_data("stakes_db", STAKES_DB)
 
         # Aktualisierten Trust berechnen
         trust = _calculate_trust(stake["agent_id"])

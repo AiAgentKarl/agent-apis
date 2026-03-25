@@ -10,6 +10,7 @@ import json
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import hashlib
+from api.storage import load_data, save_data
 
 
 # =============================================================================
@@ -57,6 +58,12 @@ REVIEWS_DB = {
         {"reviewer": "trust-verifier", "rating": 4, "comment": "Trust scoring between agents works as expected. Solid.", "timestamp": "2026-03-15T11:15:00Z"},
     ],
 }
+
+
+# --- Persistenz: Reviews aus /tmp/ laden oder Default-Daten nutzen ---
+_persisted_reviews = load_data("social_reviews")
+if _persisted_reviews is not None:
+    REVIEWS_DB = _persisted_reviews
 
 
 def _get_avg_rating(reviews):
@@ -147,6 +154,9 @@ def _handle_reviews_post(body):
         REVIEWS_DB[server] = []
     REVIEWS_DB[server].append(review)
 
+    # Persistenz: Reviews nach /tmp/ speichern
+    save_data("social_reviews", REVIEWS_DB)
+
     return 201, {
         "status": "review_submitted",
         "server": server,
@@ -197,6 +207,12 @@ THREATS_DB = [
 ]
 
 _threats_next_id = 32
+
+# --- Persistenz: Threats aus /tmp/ laden oder Default-Daten nutzen ---
+_persisted_threats = load_data("social_threats")
+if _persisted_threats is not None:
+    THREATS_DB = _persisted_threats
+    _threats_next_id = max((int(t["id"].split("-")[1]) for t in THREATS_DB), default=31) + 1
 
 VALID_THREAT_TYPES = {"malicious_url", "malicious_email", "pii_leak", "prompt_injection", "data_exfiltration", "scam_token"}
 VALID_SEVERITIES = {"low", "medium", "high", "critical"}
@@ -305,6 +321,9 @@ def _handle_threats_post(body):
     _threats_next_id += 1
 
     THREATS_DB.append(threat)
+
+    # Persistenz: Threats nach /tmp/ speichern
+    save_data("social_threats", THREATS_DB)
 
     return 201, {
         "status": "threat_reported",
@@ -515,6 +534,13 @@ TASKS_DB = [
 ]
 
 _tasks_next_id = 17
+
+# --- Persistenz: Tasks aus /tmp/ laden oder Default-Daten nutzen ---
+_persisted_tasks = load_data("social_tasks")
+if _persisted_tasks is not None:
+    TASKS_DB = _persisted_tasks
+    _tasks_next_id = max((int(t["id"].split("-")[1]) for t in TASKS_DB), default=16) + 1
+
 VALID_TASK_STATUSES = {"open", "claimed", "in_progress", "completed", "expired"}
 
 
@@ -623,6 +649,9 @@ def _handle_tasks_post(body):
 
     TASKS_DB.append(task)
 
+    # Persistenz: Tasks nach /tmp/ speichern
+    save_data("social_tasks", TASKS_DB)
+
     return 201, {
         "status": "task_created",
         "task": task,
@@ -657,6 +686,7 @@ def _handle_tasks_patch(params):
         task["status"] = "claimed"
         task["claimed_by"] = agent
         task["updated_at"] = now
+        save_data("social_tasks", TASKS_DB)
         return 200, {"status": "task_claimed", "task": task}
 
     elif action == "start":
@@ -664,6 +694,7 @@ def _handle_tasks_patch(params):
             return 400, {"error": f"Task is '{task['status']}', can only start 'claimed' tasks"}
         task["status"] = "in_progress"
         task["updated_at"] = now
+        save_data("social_tasks", TASKS_DB)
         return 200, {"status": "task_started", "task": task}
 
     elif action == "complete":
@@ -671,6 +702,7 @@ def _handle_tasks_patch(params):
             return 400, {"error": f"Task is '{task['status']}', can only complete 'claimed' or 'in_progress' tasks"}
         task["status"] = "completed"
         task["updated_at"] = now
+        save_data("social_tasks", TASKS_DB)
         return 200, {"status": "task_completed", "task": task}
 
     else:

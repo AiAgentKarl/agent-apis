@@ -9,6 +9,7 @@ from http.server import BaseHTTPRequestHandler
 import json
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timezone, timedelta
+from api.storage import load_data, save_data
 
 
 # ============================================================
@@ -424,6 +425,15 @@ def _seed_cache():
 # Beim Import/Cold Start sofort seeden
 _seed_cache()
 
+# --- Persistenz: Aus /tmp/ laden falls vorhanden (ueberschreibt Seed-Daten) ---
+_persisted_cache = load_data("cache_store")
+if _persisted_cache is not None:
+    CACHE_STORE = _persisted_cache
+
+_persisted_stats = load_data("cache_stats")
+if _persisted_stats is not None:
+    STATS = _persisted_stats
+
 
 # ============================================================
 # Hilfsfunktionen
@@ -680,6 +690,10 @@ class handler(BaseHTTPRequestHandler):
 
             CACHE_STORE[key] = entry
             STATS["total_writes"] += 1
+
+            # Persistenz: Cache und Stats nach /tmp/ speichern
+            save_data("cache_store", CACHE_STORE)
+            save_data("cache_stats", STATS)
 
             _json_response(self, 201 if not is_update else 200, {
                 "source": "agent-context-cache",

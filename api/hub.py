@@ -17,6 +17,7 @@ import json
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import hashlib
+from api.storage import load_data, save_data
 
 
 # ============================================================
@@ -522,6 +523,15 @@ AGENTS_DB = {
     },
 }
 
+# --- Persistenz: Agents und Feed aus /tmp/ laden falls vorhanden ---
+_persisted_agents = load_data("hub_agents")
+if _persisted_agents is not None:
+    AGENTS_DB = _persisted_agents
+
+_persisted_feed = load_data("hub_feed")
+if _persisted_feed is not None:
+    ACTIVITY_FEED = _persisted_feed
+
 
 # ============================================================
 # RECOMMEND-DATEN
@@ -919,6 +929,7 @@ class handler(BaseHTTPRequestHandler):
             if action == "ping":
                 agent["last_seen"] = now
                 agent["status"] = "online"
+                save_data("hub_agents", AGENTS_DB)
                 self._respond(200, {
                     "status": "heartbeat_received",
                     "agent_id": agent_id,
@@ -928,6 +939,7 @@ class handler(BaseHTTPRequestHandler):
             elif action == "offline":
                 agent["status"] = "offline"
                 agent["last_seen"] = now
+                save_data("hub_agents", AGENTS_DB)
                 self._respond(200, {
                     "status": "agent_offline",
                     "agent_id": agent_id,
@@ -1243,6 +1255,9 @@ class handler(BaseHTTPRequestHandler):
 
         AGENTS_DB[agent_id] = agent
 
+        # Persistenz: Agents nach /tmp/ speichern
+        save_data("hub_agents", AGENTS_DB)
+
         self._respond(201, {
             "status": "agent_registered",
             "agent": agent,
@@ -1272,6 +1287,7 @@ class handler(BaseHTTPRequestHandler):
         if action_type == "ping":
             agent["last_seen"] = now
             agent["status"] = "online"
+            save_data("hub_agents", AGENTS_DB)
             self._respond(200, {
                 "status": "heartbeat_received",
                 "agent_id": agent_id,
@@ -1281,6 +1297,7 @@ class handler(BaseHTTPRequestHandler):
         else:
             agent["status"] = "offline"
             agent["last_seen"] = now
+            save_data("hub_agents", AGENTS_DB)
             self._respond(200, {
                 "status": "agent_offline",
                 "agent_id": agent_id,
