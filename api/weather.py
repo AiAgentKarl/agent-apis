@@ -84,7 +84,7 @@ class handler(BaseHTTPRequestHandler):
                 geo = httpx.get(
                     GEOCODING_URL,
                     params={"name": location, "count": 1, "language": "en"},
-                    timeout=5.0
+                    timeout=10.0
                 ).json()
 
                 if not geo.get("results"):
@@ -128,7 +128,7 @@ class handler(BaseHTTPRequestHandler):
                     ]),
                     "timezone": "auto",
                 },
-                timeout=5.0
+                timeout=10.0
             ).json()
 
             current = weather.get("current", {})
